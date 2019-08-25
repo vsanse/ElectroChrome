@@ -1,10 +1,15 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, Menu} = require('electron')
+const {app, BrowserWindow, Menu, ipcMain} = require('electron')
 const windowStateKeeper = require('electron-window-state');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow;
+let mainWindow, secWindow,loginCred = {
+  username:"",
+  password:"",
+  canceled:false,
+  isUpdate:false
+}
 let mainMenu = Menu.buildFromTemplate(require("./menus/menu"));
 Menu.setApplicationMenu(mainMenu);
 let contextMenu = Menu.buildFromTemplate([
@@ -19,6 +24,11 @@ let contextMenu = Menu.buildFromTemplate([
     }
 ]);
 
+ipcMain.on("loginchannel",(e,args)=>{
+  loginCred = args;
+  console.log(loginCred)
+})
+
 function createWindow () {
   let mainWindowState = windowStateKeeper({
     defaultWidth: 1000,
@@ -32,7 +42,9 @@ function createWindow () {
     'height': mainWindowState.height,
     webPreferences: {
       nodeIntegration: true,
-      webviewTag: true
+      webviewTag: true,
+      safeDialogs: true,
+      // allowRunningInsecureContent: true 
     }
   })
 
@@ -42,10 +54,7 @@ function createWindow () {
   mainWindow.webContents.on("context-menu", e => {
     contextMenu.popup();
   });
-
-  app.on('certificate-error', (event, webCOntents, url, error, certificate, callback)=>{
-    console.log("hee")
-  })
+  mainWindow.setTitle("");
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools()
@@ -58,12 +67,47 @@ function createWindow () {
     mainWindow = null
   })
   mainWindowState.manage(mainWindow);
+
+  mainWindow.webContents.on('did-finish-load',()=>{
+    mainWindow.webContents.send("loginchannel","test")
+  })
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', createWindow);
+
+app.on('certificate-error', (event, webContents, url, error, certificate, callback)=>{
+  event.preventDefault();
+  callback(true);
+  
+})
+
+app.on('login', (event, webContents, request, authInfo, callback) => {
+  event.preventDefault()
+  console.log(callback,)
+  secWindow = new BrowserWindow({
+    width:200,
+    height:200,
+    parent:mainWindow,
+    modal:true,
+    webPreferences: {
+      nodeIntegration: true
+      }
+  });
+  secWindow.loadFile('./renderer/secondarywindows/login.html');
+  ipcMain.on("loginchannel",(e,args)=>{
+    loginCred = args;
+    if(loginCred.canceled){
+      callback()
+    }
+    else{
+      callback(loginCred.username, loginCred.password);
+    }
+    secWindow = null;
+  })
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
