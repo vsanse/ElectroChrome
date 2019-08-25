@@ -1,0 +1,40 @@
+{
+  "name": "electrochrome",
+  "version": "1.0.0",
+  "description": "Master Electron Course Code",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "watch": "nodemon --exec 'electron .'",
+    "reset": "git reset --hard"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vsanse/ElectroChrome.git"
+  },
+  "keywords": [
+    "Electron",
+    "Master Electron",
+    "demo"
+  ],
+  "author": "GitHub, Stackacademytv",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^5.0.0",
+    "nodemon": "^1.18.9"
+  },
+  "dependencies": {
+    "color.js": "^0.1.3",
+    "electron-context-menu": "^0.9.1",
+    "electron-window-state": "^5.0.3",
+    "favicon-getter": "^1.1.3",
+    "jquery": "^3.3.1",
+    "jsonfile": "^5.0.0",
+    "url-regex": "^4.1.1",
+    "uuid": "^3.3.3"
+  },
+  "bugs": {
+    "url": "https://github.com/vsanse/ElectroChrome/issues"
+  },
+  "homepage": "https://github.com/vsanse/ElectroChrome#readme"
+}

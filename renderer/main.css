@@ -1,0 +1,135 @@
+html,body{
+    margin: 0;
+    height: 100%;
+    width: 100%;
+}
+#nav-body-ctrls,
+#nav-body-tabs,
+#nav-body-views,
+.nav-tabs-tab {
+    display: flex;
+    align-items: center;
+}
+#nav-body-views{
+    height: 100%;
+}
+#nav-body-tabs {
+    overflow: auto;
+    min-height: 2rem;
+    align-items: stretch;
+}
+#nav-ctrls-url {
+    box-sizing: border-box;
+}
+.nav-tabs-tab {
+    min-width: 3.75rem;
+    width: 11.25rem;
+    min-height: 1.25rem;
+}
+.nav-icons {
+    fill: #13111178;
+    width: 1.5rem;
+    height: 1.5rem;
+    display: inline-block;
+    cursor: pointer;
+}
+.nav-icons:hover{
+    fill: #000;
+}
+.nav-body-tab .favicon{
+    width: 1rem;
+    height: 1rem;
+    padding-right: 0.25rem;
+}
+.nav-body-tab {
+    display: flex;
+    max-width: 10rem;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 0.5rem;
+    background: #777;
+    border-top-right-radius: 0.9375rem;
+    overflow: hidden;
+    cursor: pointer;
+    color: #fafafa;
+}
+.nav-body-tab.is-active {
+    background: lightgray;
+    color: black;
+}
+#nav-body-tabs-container{
+    display: flex;
+    max-width: calc(100% - 1.875rem);
+}
+.nav-tabs-clear{
+    width: 1.1rem;
+    height: 1.1rem;
+    display: none;
+}
+.nav-body-tab.is-active .nav-tabs-clear,
+.nav-body-tab:hover .nav-tabs-clear{
+    display: inline;
+}
+.electro-title{
+    max-width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 0.75rem;
+    font-family: sans-serif;
+}
+.nav-tabs-add{
+    align-self: center;
+}
+.nav-icons.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+#nav-ctrls-url {
+    flex: 1;
+    height: 2rem;
+    padding-left: 2.5rem;
+    font-size: 0.874rem;
+}
+#nav-body-ctrls .urlnav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 2.1875rem;
+    margin-right: -2.1875rem;
+    z-index: 1;
+}
+#nav-body-ctrls .urlnav img{
+    width: 1.5rem
+}
+.nav-views-view {
+    flex: 0 1;
+    width: 0;
+    height: 0;
+}
+.nav-views-view.active {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+}
+.nav-tabs-favicon {
+    align-content: flex-start;
+}
+.nav-tabs-title {
+    flex: 1;
+    cursor: default;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.nav-tabs-close {
+    align-content: flex-end;
+}
+@keyframes nav-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
