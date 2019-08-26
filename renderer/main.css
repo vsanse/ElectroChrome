@@ -6,6 +6,7 @@ html,body{
 body{
     display: flex;
     flex-flow: column;
+    font-family: Arial, Helvetica, sans-serif;
 }
 #nav-body-ctrls,
 #nav-body-tabs,
@@ -16,7 +17,8 @@ body{
 }
 #nav-body-views{
     height: 100%;
-    overflow-y: auto
+    overflow-y: auto;
+    flex-wrap: wrap;
 }
 #nav-body-tabs {
     overflow: auto;
@@ -32,6 +34,7 @@ body{
     height: 1.5rem;
     display: inline-block;
     cursor: pointer;
+    padding: 0 0.25rem;
 }
 .nav-icons:hover{
     fill: #000;
@@ -42,7 +45,7 @@ body{
     align-items: center;
     justify-content: flex-end;
     padding: 0 0.5rem;
-    background: #777;
+    background: #8a8a8a;
     border-top-right-radius: 0.9375rem;
     overflow: hidden;
     cursor: pointer;
@@ -129,4 +132,72 @@ img.nav-tabs-favicon {
     100% {
         transform: rotate(360deg);
     }
+}
+.device-bar{
+    display: flex;
+    padding: 0.2rem;
+    justify-content: center;
+    font-size: 12px;
+    background: #fde3b3;
+}
+.device-bar .view-device{
+    margin: 0.1rem;
+    padding: 0.1rem;
+    display: flex;
+    flex-flow: column;
+    border: 1px solid #444242;
+    align-items: center;
+    cursor: pointer;
+}
+.device-bar .view-device.active{
+    background: #7fda7f;
+}
+#large-device{
+    width: 100%;
+    height: 100%;
+}
+/* Login */
+.login-wrapper{
+    padding: 1rem;
+}
+.login-form{
+    display: flex;
+    flex-flow: column;
+}
+.login-form .input-wrapper{
+    width: 100%;
+    margin: 0.5rem 0;
+    display: flex;
+    align-items: center;
+}
+.input-wrapper label{
+    padding-right: 0.5rem;
+    min-width: 5rem;
+}
+.input-wrapper input{
+    min-height: 1.5rem;
+    border-radius: 6px;
+    border: 2px solid #404242;
+    flex-grow: 1;
+    box-shadow: 1px 0px 3px -1px rgba(0,0,0,0.75);
+}
+.action-wrapper{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+.action-wrapper .action{
+    border: 0;
+    border-radius: 3px;
+    font-size: 14px;
+    min-width: 5rem;
+    padding: 0.3rem 0.5rem;
+    margin: 0 0.5rem;
+    min-height: 2.2rem;
+    box-shadow: 0px 0px 4px -1px rgba(0,0,0,0.75);
+}
+.submit{
+    background: #9fb8ff;
+    order: 1;
 }

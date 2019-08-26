@@ -4,13 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <link rel="stylesheet" href="../main.css">
 </head>
 <body>
-    <input type="text" class="username" autofocus>
-    <input type="password" class="password">
-    <button class="cancel">Cancel</button>
-    <button class="submit">Submit</button>
+    <main class="login-wrapper">
+        <h2 class="heading">Sign In</h2>
+        <form class="login-form" action="javscript:void(0)" method="post" onsubmit="sendvar()">
+            <div class="usernam-wrapper input-wrapper">
+                <label for="username">Username</label>
+                <input id ="username" type="text" class="username" autofocus>
+            </div>
+           <div class="password-wrapper input-wrapper">
+                <label for="password">Password</label>
+                <input id="password" type="password" class="password">
+           </div>
+            <div class="action-wrapper">
+                <input type="submit" class="submit action" id="submit" value="Sign In">
+                <button class="cancel action">Cancel</button>
+            </div>
+        </form>
+    </main>
     <script src="./secodary.js" defer></script>
 </body>
 </html>

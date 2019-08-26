@@ -73,7 +73,7 @@ module.exports = class Navigation {
 
     init = () => {
         let params = [
-            "http://www.google.com/",
+            "https://www.google.com/",
             {
                 close: this.options.closableTabs,
                 icon: this.TAB_ICON
@@ -404,7 +404,7 @@ module.exports = class Navigation {
         // tab += "</div>";
         $("#nav-body-tabs-container").append(tab);
         // add webview
-        let composedWebviewTag = `<webview class="nav-views-view active" data-session="${
+    let composedWebviewTag = `<div class="device" id="large-device" data-session=${this.SESSION_ID}><webview class="nav-views-view active" data-session="${
             this.SESSION_ID
         }" src="${this.purifyUrl(url)}"`;
 
@@ -424,7 +424,7 @@ module.exports = class Navigation {
                 }"`;
             });
         }
-        $("#nav-body-views").append(`${composedWebviewTag}></webview>`);
+        $("#nav-body-views").append(`${composedWebviewTag}></webview></div>`);
         // enable reload button
         $("#nav-ctrls-reload").removeClass("disabled");
 
@@ -767,5 +767,11 @@ module.exports = class Navigation {
         this.updateUrl();
         this.updateCtrls();
         this.setTabColor($(".nav-views-view.active")[0].getURL());
+    }
+    addDevice = (device) =>{
+        let sessionID = $(".nav-body-tab.active").data("session");
+        let composedWebviewTag = `<div class="device" id="${$(device).data("name")}-device" data-session=${sessionID} style="width:${$(device).data("width")}px;height:${$(device).data("height")}px"><webview class="nav-views-view active" data-session="${sessionID}" src="${$(".nav-views-view.active")[0].getURL()}"></webview></div>`;
+        $("#nav-body-views").prepend(composedWebviewTag);
+        console.log(composedWebviewTag);
     }
 };
