@@ -19,6 +19,20 @@ body{
     height: 100%;
     overflow-y: auto;
     flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+}
+.device:not(#large-device){
+    margin: 0.5rem;
+    border: 1px solid grey;
+    border-radius: 2px;
+}
+.top-bar{
+    background: lightgrey;
+    font-size: 12px;
+    text-align: center;
+    padding: 0.2rem;
+
 }
 #nav-body-tabs {
     overflow: auto;

@@ -770,7 +770,7 @@ module.exports = class Navigation {
     }
     addDevice = (device) =>{
         let sessionID = $(".nav-body-tab.active").data("session");
-        let composedWebviewTag = `<div class="device" id="${$(device).data("name")}-device" data-session=${sessionID} style="width:${$(device).data("width")}px;height:${$(device).data("height")}px"><webview class="nav-views-view active" data-session="${sessionID}" src="${$(".nav-views-view.active")[0].getURL()}"></webview></div>`;
+        let composedWebviewTag = `<div class="device" id="${$(device).data("name")}-device" data-session=${sessionID}><div class="top-bar">${$(device).data("name")}</div><div class="view-wrapper" style="width:${$(device).data("width")}px;height:${$(device).data("height")}px"><webview class="nav-views-view active" data-session="${sessionID}" src="${$(".nav-views-view.active")[0].getURL()}"></webview></div></div>`;
         $("#nav-body-views").prepend(composedWebviewTag);
         console.log(composedWebviewTag);
     }
