@@ -76,7 +76,7 @@ $("#nav-ctrls-url").keyup(e => {
 
 for (var device in devices) {
     $(".device-bar").append(
-        `<div id="view-${device}" class="view-device" data-name=${device} data-width=${devices[device].width} data-height=${devices[device].height}><span>${device}</span><span class="size">${devices[device].width} &times; ${devices[device].height}</span></div>`
+        `<div id="view-${device}" class="view-device" data-name="${device}" data-displayname="${devices[device].name}" data-width=${devices[device].width} data-height=${devices[device].height}><span>${devices[device].name}</span></div>`
     );
 }
 
@@ -93,7 +93,22 @@ $(".view-device").on("click", function(){
 
 $(document).on('input change', '.zoomLevel-slider', function() {
     var zoomFactor = $(this).val()
+    setzoom(zoomFactor);
+});
+
+$("#nav-body-ctrls").on("click",".fa-minus",function(){
+    var currZoom = parseInt($(".zoomLevel-slider").val());
+    $(".zoomLevel-slider").val(currZoom-1);
+    setzoom(currZoom-1);
+})
+$("#nav-body-ctrls").on("click",".fa-plus",function(){
+    var currZoom = parseInt($(".zoomLevel-slider").val());
+    $(".zoomLevel-slider").val(currZoom+1);
+    setzoom(currZoom+1);
+})
+
+function setzoom(zoomFactor){
     $(".zoomLevel").text(zoomFactor+"%");
     $("#nav-body-views").css("zoom",zoomFactor*0.01);
     tabs.setZoomFactor(zoomFactor*0.01);
-});
+}

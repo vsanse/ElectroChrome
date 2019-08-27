@@ -119,7 +119,6 @@ module.exports = class Navigation {
         if (tab == null) {
             tab = $(".nav-body-tab.is-active");
         }
-        // tab.find(`.nav-tabs-favicon`).attr("src", './images/earth.svg');
         tab.find(".nav-tabs-favicon").css(
             "animation",
             "nav-spin 2s linear infinite"
@@ -136,7 +135,6 @@ module.exports = class Navigation {
         if (tab == null) {
             tab = $(".nav-body-tab.is-active");
         }
-        // tab.find(`.nav-tabs-favicon`).attr("src", tab.data('faviconurl'));
         tab.find(".nav-tabs-favicon").css("animation", "");
         $(".urlnav .nav-tabs-favicon").css("animation", "");
         $("#nav-ctrls-reload").html(this.buttons.SVG_RELOAD);
@@ -175,10 +173,8 @@ module.exports = class Navigation {
             url
         );
     };
-    addEvents = (sessionID, options) => {
+    addEvents = (webview,sessionID, options) => {
         let currtab = $('.nav-body-tab[data-session="' + sessionID + '"]');
-        let webview = $('.nav-views-view[data-session="' + sessionID + '"]');
-
         webview.on("dom-ready", () => {
             if (options.contextMenu) {
                 contextMenu({
@@ -237,14 +233,18 @@ module.exports = class Navigation {
         });
         webview.on("load-commit", () => {
             this.updateCtrls();
+            // this.navigateAllviews(webview);
         });
         webview[0].addEventListener("did-navigate", res => {
+            // this.navigateAllviews(webview,res.url);
             this.updateUrl(res.url);
         });
         webview[0].addEventListener("did-fail-load", res => {
+            // this.navigateAllviews(webview,res.url);
             this.updateUrl(res.validatedUrl);
         });
         webview[0].addEventListener("did-navigate-in-page", res => {
+            // this.navigateAllviews(webview,res.url);
             this.updateUrl(res.url);
         });
         webview[0].addEventListener("new-window", res => {
@@ -363,9 +363,9 @@ module.exports = class Navigation {
             `;
         $("#nav-body-tabs-container").append(tab);
         // add webview
-        let composedWebviewTag = `<div class="device active" id="large-device" data-session=${
+        let composedWebviewTag = `<div class="device active large-device" id="large-device" data-session=${
             this.SESSION_ID
-        }><webview class="nav-views-view active" partition="main" data-session="${
+        }><webview class="nav-views-view active" id="large-device-view" data-session="${
             this.SESSION_ID
         }" src="${this.purifyUrl(
             url
@@ -377,7 +377,8 @@ module.exports = class Navigation {
 
         // update url and add events
         this.updateUrl(this.purifyUrl(url));
-        let newWebview = this.addEvents(this.SESSION_ID++, options);
+        let webview = $('.nav-views-view[data-session="' + this.SESSION_ID + '"]');
+        let newWebview = this.addEvents(webview,this.SESSION_ID++, options);
         if (typeof options.postTabOpenCallback === "function") {
             options.postTabOpenCallback(newWebview);
         }
@@ -720,33 +721,49 @@ module.exports = class Navigation {
         this.setTabColor($(".nav-views-view.active")[0].getURL());
     };
     addDevice = device => {
+        var options = {
+            icon: "clean",
+            title: "default",
+            contextMenu: true,
+            newTabCallback: this.newTabCallback,
+            changeTabCallback: this.changeTabCallback
+        };
         let sessionID = $(".nav-body-tab.active").data("session");
-        let composedWebviewTag = `<div class="device active" id="${$(
+        let devicename = $(device).data("name");
+        let composedWebviewTag = `<div class="device active" id="${devicename}-device" data-session=${sessionID}><div class="top-bar">${$(
             device
-        ).data(
-            "name"
-        )}-device" data-session=${sessionID}><div class="top-bar">${$(
-            device
-        ).data("name")}</div><div class="view-wrapper" style="width:${$(
+        ).data("displayname")}</div><div class="view-wrapper" style="width:${$(
             device
         ).data("width")}px;height:${$(device).data(
             "height"
-        )}px"><webview class="nav-views-view active" partition="${$(device).data("name")}" data-session="${sessionID}" src="${$(
+        )}px"><webview class="nav-views-view active" partition="persist:devices" id="${devicename}-${sessionID}" data-session="${sessionID}" src="${$(
             ".nav-views-view.active"
         )[0].getURL()}" useragent="Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Mobile Safari/537.36"></webview></div></div>`;
         $("#nav-body-views").prepend(composedWebviewTag);
-        console.log(composedWebviewTag);
+        this.addEvents($(`#${devicename}-${sessionID}`),sessionID,options);
     };
     setZoomFactor = zoomfactor => {
         let webviews = $(".nav-views-view.active");
         for (let webview = 0; webview < webviews.length; webview++) {
-            try {
-                webviews[webview].setZoomFactor(zoomfactor);
-            } catch (e) {
-                webviews[webview].addEventListener("dom-ready", event => {
+            if($(webviews[webview]).parent().hasClass("view-wrapper")){
+                try {
                     webviews[webview].setZoomFactor(zoomfactor);
-                });
+                } 
+                catch (e) {
+                    webviews[webview].addEventListener("dom-ready", event => {
+                        webviews[webview].setZoomFactor(zoomfactor);
+                    });
+                }
             }
         }
     };
+    // navigateAllviews = (currentView, url) =>{
+    //     let webviews = $(".nav-views-view.active");
+    //     url = url?url:$(currentView).attr("src");
+    //     for (let webview = 0; webview < webviews.length; webview++){
+    //         if($(webviews[webview]).attr("id")!==$(currentView).attr("id")){
+    //             $(webviews[webview]).attr("src",url);
+    //         }
+    //     }
+    // }
 };
