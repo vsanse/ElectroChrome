@@ -98,7 +98,7 @@ app.on("login", (event, webContents, request, authInfo, callback) => {
             nodeIntegration: true
         }
     });
-    secWindow.loadFile("./renderer/secondarywindows/login.html");
+    secWindow.loadFile("./renderer/windows/login.html");
     ipcMain.once("loginchannel", (e, args) => {
         loginCred = args;
         if (loginCred.canceled) {

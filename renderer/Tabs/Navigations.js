@@ -33,7 +33,6 @@ module.exports = class Navigation {
             SVG_CLEAR:
                 '<svg class="close-nav" height="100%" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'
         };
-        this.NAV = this;
         this.newTabCallback = this.options.newTabCallback;
         this.changeTabCallback = this.options.changeTabCallback;
         this.SESSION_ID = 1;
@@ -66,7 +65,7 @@ module.exports = class Navigation {
         }
         if (this.options.showUrlBar) {
             $("#nav-body-ctrls").append(
-                `<span class="urlnav"><i class="nav-tabs-favicon nav-icons" title="Add new tab">${this.buttons.SVG_FAVICON}</i></span><input id="nav-ctrls-url" type="text" title="Enter an address or search term"/>`
+                `<span class="urlnav"><i class="nav-tabs-favicon nav-icons" title="Add new tab">${this.buttons.SVG_FAVICON}</i></span><input id="nav-ctrls-url" type="text" title="Enter an address or search term"/><i class="fa fa-minus" aria-hidden="true"></i><input type="range" min="1" max="300" value="100" class="zoomLevel-slider" id="zoomLevel-slider"><i class="fa fa-plus" aria-hidden="true"></i><span class="zoomLevel">100%<span>`
             );
         }
     }
@@ -139,7 +138,7 @@ module.exports = class Navigation {
         }
         // tab.find(`.nav-tabs-favicon`).attr("src", tab.data('faviconurl'));
         tab.find(".nav-tabs-favicon").css("animation", "");
-        $(".urlnav .nav-tabs-favicon").css("animation","");
+        $(".urlnav .nav-tabs-favicon").css("animation", "");
         $("#nav-ctrls-reload").html(this.buttons.SVG_RELOAD);
     };
     purifyUrl = url => {
@@ -157,7 +156,7 @@ module.exports = class Navigation {
         }
         return url;
     };
-    setTabColor = (url) => {
+    setTabColor = url => {
         const getHexColor = new Color(url, {
             amount: 1,
             format: "hex"
@@ -167,7 +166,10 @@ module.exports = class Navigation {
         });
     };
     setFavicon = (sessionID, url) => {
-        $(`.nav-body-tab[data-session=${sessionID}] .nav-tabs-favicon`).attr("src", url);
+        $(`.nav-body-tab[data-session=${sessionID}] .nav-tabs-favicon`).attr(
+            "src",
+            url
+        );
         $(`.nav-body-tab[data-session=${sessionID}] .favicon`).attr(
             "data-faviconurl",
             url
@@ -191,9 +193,11 @@ module.exports = class Navigation {
                     }
                 });
             }
-            webview[0].getWebContents().once("login",()=>{
-                this.send($(webview[0]).data('session'), "loginchannel",{test:"test"})
-            })
+            webview[0].getWebContents().once("login", () => {
+                this.send($(webview[0]).data("session"), "loginchannel", {
+                    test: "test"
+                });
+            });
         });
         webview.on("page-title-updated", () => {
             if (options.title == "default") {
@@ -330,23 +334,9 @@ module.exports = class Navigation {
             changeTabCallback: this.changeTabCallback
         };
         options = options ? Object.assign(defaults, options) : defaults;
-        // if (typeof options.newTabCallback === "function") {
-        //     let result = options.newTabCallback(url, options);
-        //     if (!result) {
-        //         return null;
-        //     }
-        //     if (result.url) {
-        //         url = result.url;
-        //     }
-        //     if (result.options) {
-        //         options = result.options;
-        //     }
-        //     if (typeof result.postTabOpenCallback === "function") {
-        //         options.postTabOpenCallback = result.postTabOpenCallback;
-        //     }
-        // }
-        // validate options.id
-        $(".nav-body-tab, .nav-views-view").removeClass("active");
+        $(".nav-body-tab, .nav-views-view, .device.active").removeClass(
+            "active"
+        );
         if ($("#" + options.id).length) {
             console.log(
                 'ERROR[electron-navigation][func "newTab();"]: The ID "' +
@@ -364,66 +354,23 @@ module.exports = class Navigation {
             return false;
         }
         // build tab
-        let tab =
-            `
+        let tab = `
             <div id=${this.SESSION_ID} class="nav-body-tab active" data-session=${this.SESSION_ID}>
                 <img class="nav-tabs-favicon nav-icons favicon" src="./images/earth.svg"/>
                 <i class="nav-tabs-title"> New Tab </i>
                 <i class="nav-icons nav-tabs-clear" title="Add new tab">${this.buttons.SVG_CLEAR}</i>
             </div>
             `;
-        // favicon
-        // if (options.icon == "clean") {
-        //     tab +=
-        //         '<i class="nav-tabs-favicon nav-icons">' +
-        //         this.buttons.SVG_FAVICON +
-        //         "</i>";
-        // } else if (options.icon === "default") {
-        //     tab += '<img class="nav-tabs-favicon nav-icons" src=""/>';
-        // } else {
-        //     tab +=
-        //         '<img class="nav-tabs-favicon nav-icons" src="' +
-        //         options.icon +
-        //         '"/>';
-        // }
-        // title
-        // if (options.title == "default") {
-        //     tab += '<i class="nav-tabs-title"> New Tab </i>';
-        // } else {
-        //     tab += '<i class="nav-tabs-title">' + options.title + "</i>";
-        // }
-        // tab += `<i class="nav-icons nav-tabs-clear" title="Add new tab">${this.buttons.SVG_CLEAR}</i>`;
-        // close
-        // if (options.close && this.globalCloseableTabsOverride) {
-        //     tab +=
-        //         '<i class="nav-tabs-close nav-icons">' +
-        //         this.buttons.SVG_CLEAR +
-        //         "</i>";
-        // }
-        // finish tab
-        // tab += "</div>";
         $("#nav-body-tabs-container").append(tab);
         // add webview
-    let composedWebviewTag = `<div class="device" id="large-device" data-session=${this.SESSION_ID}><webview class="nav-views-view active" data-session="${
+        let composedWebviewTag = `<div class="device active" id="large-device" data-session=${
             this.SESSION_ID
-        }" src="${this.purifyUrl(url)}"`;
+        }><webview class="nav-views-view active" partition="main" data-session="${
+            this.SESSION_ID
+        }" src="${this.purifyUrl(
+            url
+        )}" plugins useragent="Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko"`;
 
-        composedWebviewTag += ` data-readonly="${
-            options.readonlyUrl ? "true" : "false"
-        }"`;
-        if (options.id) {
-            composedWebviewTag += ` id=${options.id}`;
-        }
-        if (options.node) {
-            composedWebviewTag += " nodeintegration";
-        }
-        if (options.webviewAttributes) {
-            Object.keys(options.webviewAttributes).forEach(key => {
-                composedWebviewTag += ` ${key}="${
-                    options.webviewAttributes[key]
-                }"`;
-            });
-        }
         $("#nav-body-views").append(`${composedWebviewTag}></webview></div>`);
         // enable reload button
         $("#nav-ctrls-reload").removeClass("disabled");
@@ -454,7 +401,7 @@ module.exports = class Navigation {
         }
     };
     closeTab = id => {
-        if ($(".nav-body-tab").length === 1){
+        if ($(".nav-body-tab").length === 1) {
             remote.app.quit();
         }
         id = id || null;
@@ -476,7 +423,7 @@ module.exports = class Navigation {
                 return false;
             }
         }
-        if(session.hasClass("active")){
+        if (session.hasClass("active")) {
             if (session.next(".nav-body-tab").length) {
                 session.next().addClass("active");
                 (this.changeTabCallback || (() => {}))(session.next()[1]);
@@ -533,7 +480,10 @@ module.exports = class Navigation {
     reload = id => {
         id = id || null;
         if (id == null) {
-            $(".nav-views-view.active")[0].reload();
+            let views = $(".nav-views-view.active");
+            for (let view = 0; view < views.length; view++) {
+                views[view].reload();
+            }
         } else {
             if ($("#" + id).length) {
                 $("#" + id)[0].reload();
@@ -652,7 +602,7 @@ module.exports = class Navigation {
                 webview.openDevTools();
             } catch (e) {
                 webview.addEventListener("dom-ready", event => {
-                    webview.openDevTools('right');
+                    webview.openDevTools("right");
                 });
             }
         }
@@ -755,23 +705,48 @@ module.exports = class Navigation {
                 return;
             }
         }
-
     }; //:goToTabByWebviewId()
-    goToTabByWebviewId = (id) =>{
+    goToTabByWebviewId = id => {
         let $activeTabAndView = $(
-            "#nav-body-tabs .nav-body-tab.active, #nav-body-views .nav-views-view.active"
+            "#nav-body-tabs .nav-body-tab.active, #nav-body-views .nav-views-view.active, .device.active"
         );
-        let $tabAndViewToActivate = $(`#nav-body-tabs .nav-body-tab[data-session=${id}], #nav-body-views .nav-views-view[data-session=${id}]`);
-        $activeTabAndView.removeClass('active');
+        let $tabAndViewToActivate = $(
+            `#nav-body-tabs .nav-body-tab[data-session=${id}], #nav-body-views .nav-views-view[data-session=${id}], .device[data-session=${id}]`
+        );
+        $activeTabAndView.removeClass("active");
         $tabAndViewToActivate.addClass("active");
         this.updateUrl();
         this.updateCtrls();
         this.setTabColor($(".nav-views-view.active")[0].getURL());
-    }
-    addDevice = (device) =>{
+    };
+    addDevice = device => {
         let sessionID = $(".nav-body-tab.active").data("session");
-        let composedWebviewTag = `<div class="device" id="${$(device).data("name")}-device" data-session=${sessionID}><div class="top-bar">${$(device).data("name")}</div><div class="view-wrapper" style="width:${$(device).data("width")}px;height:${$(device).data("height")}px"><webview class="nav-views-view active" data-session="${sessionID}" src="${$(".nav-views-view.active")[0].getURL()}"></webview></div></div>`;
+        let composedWebviewTag = `<div class="device active" id="${$(
+            device
+        ).data(
+            "name"
+        )}-device" data-session=${sessionID}><div class="top-bar">${$(
+            device
+        ).data("name")}</div><div class="view-wrapper" style="width:${$(
+            device
+        ).data("width")}px;height:${$(device).data(
+            "height"
+        )}px"><webview class="nav-views-view active" partition="${$(device).data("name")}" data-session="${sessionID}" src="${$(
+            ".nav-views-view.active"
+        )[0].getURL()}" useragent="Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Mobile Safari/537.36"></webview></div></div>`;
         $("#nav-body-views").prepend(composedWebviewTag);
         console.log(composedWebviewTag);
-    }
+    };
+    setZoomFactor = zoomfactor => {
+        let webviews = $(".nav-views-view.active");
+        for (let webview = 0; webview < webviews.length; webview++) {
+            try {
+                webviews[webview].setZoomFactor(zoomfactor);
+            } catch (e) {
+                webviews[webview].addEventListener("dom-ready", event => {
+                    webviews[webview].setZoomFactor(zoomfactor);
+                });
+            }
+        }
+    };
 };

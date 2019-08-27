@@ -1,9 +1,10 @@
 var $ = require("jquery");
-var { ipcRenderer, remote } = require("electron");
+var { ipcRenderer, remote, webFrame } = require("electron");
 const devices = require("./devices").devices;
 const tabs = new (require("./Tabs/Navigations"))();
 tabs.init();
 
+console.log(webFrame.parent)
 //
 // add a tab, default to google.com
 //
@@ -75,7 +76,7 @@ $("#nav-ctrls-url").keyup(e => {
 
 for (var device in devices) {
     $(".device-bar").append(
-        `<div id="view-${device}" class="view-device" data-name=${device} data-width=${devices[device].width} data-height=${devices[device].height}><span>${device}</span><button>${devices[device].width} &times; ${devices[device].height}</button></div>`
+        `<div id="view-${device}" class="view-device" data-name=${device} data-width=${devices[device].width} data-height=${devices[device].height}><span>${device}</span><span class="size">${devices[device].width} &times; ${devices[device].height}</span></div>`
     );
 }
 
@@ -89,3 +90,10 @@ $(".view-device").on("click", function(){
     }
     $(this).toggleClass("active");
 })
+
+$(document).on('input change', '.zoomLevel-slider', function() {
+    var zoomFactor = $(this).val()
+    $(".zoomLevel").text(zoomFactor+"%");
+    $("#nav-body-views").css("zoom",zoomFactor*0.01);
+    tabs.setZoomFactor(zoomFactor*0.01);
+});

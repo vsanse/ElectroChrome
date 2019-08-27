@@ -1,0 +1,49 @@
+
+.device{
+    display: none;
+    &.active{
+        display: block;
+    }
+    &:not(#large-device){
+        margin: 0.5rem;
+        border: 0.0625rem solid grey;
+        border-radius: 0.125rem;
+        .top-bar{
+            background: $purple;
+            font-size: 0.75rem;
+            text-align: center;
+            padding: 0.2rem;
+        }
+    }
+}
+.device-bar{
+    display: flex;
+    padding: 0.5rem;
+    justify-content: center;
+    font-size: 0.75rem;
+    background: $second;
+    .view-device{
+        margin: 0.25rem;
+        padding: 0.3rem;
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+        background: $purple;
+        color: $deep;
+        cursor: pointer;
+        box-shadow: 1px -1px 10px 0px $purple;
+        &.active{
+            background: $green;
+        }
+        .button{
+            background: $top;
+            color: $text;
+            border-radius: 0.9375rem;
+            pointer-events: none;
+        }
+    }
+}
+#large-device{
+    width: 100%;
+    height: 100%;
+}
