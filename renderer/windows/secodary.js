@@ -1,8 +1,5 @@
-var {ipcRenderer, remote} = require('electron')
 var $ = require("jquery");
-var { ipcRenderer, remote, webFrame } = require("electron");
-
-console.log(webFrame.parent)
+var { ipcRenderer, remote } = require("electron");
 
 let loginCred = {
     username:"",

@@ -1,5 +1,6 @@
 var $ = require("jquery");
 var Color = require("color.js");
+var fs = require('fs');
 var urlRegex = require("url-regex");
 const contextMenu = require("electron-context-menu");
 const { remote } = require("electron");
@@ -173,7 +174,7 @@ module.exports = class Navigation {
             url
         );
     };
-    addEvents = (webview,sessionID, options) => {
+    addEvents = (webview, sessionID, options) => {
         let currtab = $('.nav-body-tab[data-session="' + sessionID + '"]');
         webview.on("dom-ready", () => {
             if (options.contextMenu) {
@@ -189,11 +190,6 @@ module.exports = class Navigation {
                     }
                 });
             }
-            webview[0].getWebContents().once("login", () => {
-                this.send($(webview[0]).data("session"), "loginchannel", {
-                    test: "test"
-                });
-            });
         });
         webview.on("page-title-updated", () => {
             if (options.title == "default") {
@@ -233,18 +229,17 @@ module.exports = class Navigation {
         });
         webview.on("load-commit", () => {
             this.updateCtrls();
-            // this.navigateAllviews(webview);
         });
         webview[0].addEventListener("did-navigate", res => {
-            // this.navigateAllviews(webview,res.url);
+            this.navigateAllviews(webview, res.url);
             this.updateUrl(res.url);
         });
         webview[0].addEventListener("did-fail-load", res => {
-            // this.navigateAllviews(webview,res.url);
+            this.navigateAllviews(webview, res.url);
             this.updateUrl(res.validatedUrl);
         });
         webview[0].addEventListener("did-navigate-in-page", res => {
-            // this.navigateAllviews(webview,res.url);
+            this.navigateAllviews(webview, res.url);
             this.updateUrl(res.url);
         });
         webview[0].addEventListener("new-window", res => {
@@ -377,8 +372,10 @@ module.exports = class Navigation {
 
         // update url and add events
         this.updateUrl(this.purifyUrl(url));
-        let webview = $('.nav-views-view[data-session="' + this.SESSION_ID + '"]');
-        let newWebview = this.addEvents(webview,this.SESSION_ID++, options);
+        let webview = $(
+            '.nav-views-view[data-session="' + this.SESSION_ID + '"]'
+        );
+        let newWebview = this.addEvents(webview, this.SESSION_ID++, options);
         if (typeof options.postTabOpenCallback === "function") {
             options.postTabOpenCallback(newWebview);
         }
@@ -730,26 +727,32 @@ module.exports = class Navigation {
         };
         let sessionID = $(".nav-body-tab.active").data("session");
         let devicename = $(device).data("name");
-        let composedWebviewTag = `<div class="device active" id="${devicename}-device" data-session=${sessionID}><div class="top-bar">${$(
+        let composedWebviewTag = `
+        <div class="device active" id="${devicename}-device" data-session=${sessionID}><div class="top-bar">${$(
             device
-        ).data("displayname")}</div><div class="view-wrapper" style="width:${$(
+        ).data(
+            "displayname"
+        )}</div><span class="captureview"><i class="fa fa-camera" aria-hidden="true"></i></span><div class="view-wrapper" style="width:${$(
             device
         ).data("width")}px;height:${$(device).data(
             "height"
-        )}px"><webview class="nav-views-view active" partition="persist:devices" id="${devicename}-${sessionID}" data-session="${sessionID}" src="${$(
-            ".nav-views-view.active"
+        )}px"><webview class="nav-views-view active" id="${devicename}-${sessionID}" data-session="${sessionID}" src="${$(
+            "#large-device-view.active"
         )[0].getURL()}" useragent="Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Mobile Safari/537.36"></webview></div></div>`;
         $("#nav-body-views").prepend(composedWebviewTag);
-        this.addEvents($(`#${devicename}-${sessionID}`),sessionID,options);
+        this.addEvents($(`#${devicename}-${sessionID}`), sessionID, options);
     };
     setZoomFactor = zoomfactor => {
         let webviews = $(".nav-views-view.active");
         for (let webview = 0; webview < webviews.length; webview++) {
-            if($(webviews[webview]).parent().hasClass("view-wrapper")){
+            if (
+                $(webviews[webview])
+                    .parent()
+                    .hasClass("view-wrapper")
+            ) {
                 try {
                     webviews[webview].setZoomFactor(zoomfactor);
-                } 
-                catch (e) {
+                } catch (e) {
                     webviews[webview].addEventListener("dom-ready", event => {
                         webviews[webview].setZoomFactor(zoomfactor);
                     });
@@ -757,13 +760,29 @@ module.exports = class Navigation {
             }
         }
     };
-    // navigateAllviews = (currentView, url) =>{
-    //     let webviews = $(".nav-views-view.active");
-    //     url = url?url:$(currentView).attr("src");
-    //     for (let webview = 0; webview < webviews.length; webview++){
-    //         if($(webviews[webview]).attr("id")!==$(currentView).attr("id")){
-    //             $(webviews[webview]).attr("src",url);
-    //         }
-    //     }
-    // }
+    navigateAllviews = (currentView, url) => {
+        let webviews = $(".nav-views-view.active");
+        url = url ? url : $(currentView).attr("src");
+        for (let webview = 0; webview < webviews.length; webview++) {
+            if (
+                $(webviews[webview]).attr("src") !== $(currentView).attr("src")
+            ) {
+                $(webviews[webview]).attr("src", url);
+            }
+        }
+    };
+    captureImage = (webview, type) => {
+        console.log(webview);
+        webview.getWebContents().capturePage([375,1055],(img) =>{
+            console.log(remote.app.getPath("desktop"))
+            fs.writeFile(`${remote.app.getPath("desktop")}/temp2.jpg`, img.toJPEG(100),(err)=>{
+                if(err){
+                    throw err;
+                }
+                else{
+                    console.log(`file saved at`,remote.app.getPath("desktop"))
+                }
+            })
+        });
+    };
 };

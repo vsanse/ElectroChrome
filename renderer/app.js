@@ -1,10 +1,8 @@
 var $ = require("jquery");
-var { ipcRenderer, remote, webFrame } = require("electron");
 const devices = require("./devices").devices;
 const tabs = new (require("./Tabs/Navigations"))();
+var { ipcRenderer, remote } = require("electron");
 tabs.init();
-
-console.log(webFrame.parent)
 //
 // add a tab, default to google.com
 //
@@ -79,6 +77,9 @@ for (var device in devices) {
         `<div id="view-${device}" class="view-device" data-name="${device}" data-displayname="${devices[device].name}" data-width=${devices[device].width} data-height=${devices[device].height}><span>${devices[device].name}</span></div>`
     );
 }
+$(".device-bar").append(
+    '<div class="view-device add-device"><span><i class="fa fa-plus-square-o" aria-hidden="true"></i></span></div>'
+);
 
 $(".view-device").on("click", function(){
     if($(this).hasClass('active')){
@@ -112,3 +113,13 @@ function setzoom(zoomFactor){
     $("#nav-body-views").css("zoom",zoomFactor*0.01);
     tabs.setZoomFactor(zoomFactor*0.01);
 }
+
+$(document).on("click", ".captureview", function(){
+    // tabs.captureImage($(this).parent(".device").find("webview")[0])
+    options = {
+        width: parseInt($(".captureview").siblings(".view-wrapper").css("width").split("px")[0]),
+        height: parseInt($(".captureview").siblings(".view-wrapper").css("height").split("px")[0]),
+        url: $(this).parent(".device").find("webview")[0].getURL()
+    }
+    ipcRenderer.send("windowchannel",options);
+})

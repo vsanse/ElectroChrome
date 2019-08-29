@@ -1,11 +1,13 @@
 // Modules to control application life and create native browser window
 const { app, BrowserWindow, Menu, ipcMain } = require("electron");
 const windowStateKeeper = require("electron-window-state");
+const fs = require("fs");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow,
     secWindow,
+    offscreenWindow,
     loginCred = {
         username: "",
         password: "",
@@ -15,11 +17,6 @@ let mainWindow,
 let mainMenu = Menu.buildFromTemplate(require("./menus/menu"));
 Menu.setApplicationMenu(mainMenu);
 let contextMenu = Menu.buildFromTemplate([
-    // {
-    //     label: "Inspect",
-    //     role: "toggleDevTools",
-    //     accelerator: "F12"
-    // },
     {
         label: "Full Screen",
         role: "toggleFUllScreen"
@@ -54,7 +51,7 @@ function createWindow() {
     mainWindow.setTitle("");
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools();
 
     // Emitted when the window is closed.
     mainWindow.on("closed", function() {
@@ -64,10 +61,6 @@ function createWindow() {
         mainWindow = null;
     });
     mainWindowState.manage(mainWindow);
-
-    mainWindow.webContents.on("did-finish-load", () => {
-        mainWindow.webContents.send("loginchannel", "test");
-    });
 }
 
 // This method will be called when Electron has finished
@@ -88,11 +81,8 @@ app.on("login", (event, webContents, request, authInfo, callback) => {
     secWindow = new BrowserWindow({
         width: 400,
         height: 300,
-        maxWidth: 400,
-        maxHeight:300,
-        minWidth: 400,
-        minHeight: 300,
         parent: mainWindow,
+        resizable: false,
         modal: true,
         webPreferences: {
             nodeIntegration: true
@@ -123,5 +113,49 @@ app.on("activate", function() {
     if (mainWindow === null) createWindow();
 });
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+ipcMain.on("windowchannel", (e, args) => {
+    offscreenWindow = new BrowserWindow({
+        width: args.width,
+        height: args.height,
+        fullscreenable: false,
+        enableLargerThanScreen: true,
+        show: false,
+        webPreferences:{
+          offscreen: true
+        }
+    });
+    offscreenWindow.loadURL(args.url);
+
+    offscreenWindow.webContents.on("did-finish-load", function() {
+        var code =
+            "var r = {}; \
+                     r.pageWidth = document.body.offsetWidth;\
+                    r.pageHeight = document.body.offsetHeight; \
+                    r;";
+        offscreenWindow.webContents.executeJavaScript(code, false, function(r) {
+            let pageMeta = {};
+            pageMeta.captureHeight = r.pageHeight;
+            pageMeta.captureWidth = r.pageWidth;
+            offscreenWindow.setSize(pageMeta.captureWidth, pageMeta.captureHeight);
+            offscreenWindow.webContents.capturePage(img => {
+                console.log("heere");
+                fs.writeFile(
+                    `${app.getPath("desktop")}/temp2.jpg`,
+                    img.toJPEG(100),
+                    err => {
+                        if (err) {
+                            throw err;
+                        } else {
+                            console.log(
+                                `file saved at`,
+                                app.getPath("desktop")
+                            );
+                        }
+                        offscreenWindow.close();
+                        offscreenWindow = null;
+                    }
+                );
+            });
+        });
+    });
+});
