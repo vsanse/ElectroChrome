@@ -36,9 +36,7 @@ function createWindow() {
         height: mainWindowState.height,
         webPreferences: {
             nodeIntegration: true,
-            webviewTag: true,
-            safeDialogs: true
-            // allowRunningInsecureContent: true
+            webviewTag: true
         }
     });
 
