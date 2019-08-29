@@ -138,9 +138,8 @@ ipcMain.on("windowchannel", (e, args) => {
             pageMeta.captureWidth = r.pageWidth;
             offscreenWindow.setSize(pageMeta.captureWidth, pageMeta.captureHeight);
             offscreenWindow.webContents.capturePage(img => {
-                console.log("heere");
                 fs.writeFile(
-                    `${app.getPath("desktop")}/temp2.jpg`,
+                    `${app.getPath("desktop")}/${args.device}-${+new Date()}.jpg`,
                     img.toJPEG(100),
                     err => {
                         if (err) {

@@ -115,11 +115,13 @@ function setzoom(zoomFactor){
 }
 
 $(document).on("click", ".captureview", function(){
-    // tabs.captureImage($(this).parent(".device").find("webview")[0])
+    let $viewWrapper = $(this).siblings(".view-wrapper");
+    let $deviceDiv = $(this).parent(".device")
     options = {
-        width: parseInt($(".captureview").siblings(".view-wrapper").css("width").split("px")[0]),
-        height: parseInt($(".captureview").siblings(".view-wrapper").css("height").split("px")[0]),
-        url: $(this).parent(".device").find("webview")[0].getURL()
+        width: parseInt($viewWrapper.css("width").split("px")[0]),
+        height: parseInt($viewWrapper.css("height").split("px")[0]),
+        url: $deviceDiv.find("webview")[0].getURL(),
+        device: $deviceDiv.attr("id")
     }
     ipcRenderer.send("windowchannel",options);
 })

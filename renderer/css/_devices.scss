@@ -1,6 +1,7 @@
 
 .device{
     display: none;
+    background: $top;
     &.active{
         display: block;
     }
@@ -13,6 +14,14 @@
             font-size: 1.1vw;
             text-align: center;
             padding: 0.2rem;
+            display: inline-block;
+            width: 90%;
+        }
+        .captureview{
+            cursor: pointer;
+            &:hover{
+                color: $purple;
+            }
         }
     }
 }
@@ -38,6 +47,12 @@
         &.active{
             background: $green;
             color: $deep;
+        }
+        &.add-device{
+            font-size: 1.5rem;
+            i{
+                vertical-align: text-bottom;
+            }
         }
         .button{
             background: $top;

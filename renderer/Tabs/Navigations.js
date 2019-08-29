@@ -728,17 +728,7 @@ module.exports = class Navigation {
         let sessionID = $(".nav-body-tab.active").data("session");
         let devicename = $(device).data("name");
         let composedWebviewTag = `
-        <div class="device active" id="${devicename}-device" data-session=${sessionID}><div class="top-bar">${$(
-            device
-        ).data(
-            "displayname"
-        )}</div><span class="captureview"><i class="fa fa-camera" aria-hidden="true"></i></span><div class="view-wrapper" style="width:${$(
-            device
-        ).data("width")}px;height:${$(device).data(
-            "height"
-        )}px"><webview class="nav-views-view active" id="${devicename}-${sessionID}" data-session="${sessionID}" src="${$(
-            "#large-device-view.active"
-        )[0].getURL()}" useragent="Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Mobile Safari/537.36"></webview></div></div>`;
+        <div class="device active" id="${devicename}-device" data-session=${sessionID}><div class="top-bar"><span>${$(device).data("displayname")}<span></div><span class="captureview"><i class="fa fa-camera" aria-hidden="true"></i></span><div class="view-wrapper" style="width:${$(device).data("width")}px;height:${$(device).data("height")}px"><webview class="nav-views-view active" id="${devicename}-${sessionID}" data-session="${sessionID}" src="${$("#large-device-view.active")[0].getURL()}" useragent="Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Mobile Safari/537.36"></webview></div></div>`;
         $("#nav-body-views").prepend(composedWebviewTag);
         this.addEvents($(`#${devicename}-${sessionID}`), sessionID, options);
     };
@@ -770,19 +760,5 @@ module.exports = class Navigation {
                 $(webviews[webview]).attr("src", url);
             }
         }
-    };
-    captureImage = (webview, type) => {
-        console.log(webview);
-        webview.getWebContents().capturePage([375,1055],(img) =>{
-            console.log(remote.app.getPath("desktop"))
-            fs.writeFile(`${remote.app.getPath("desktop")}/temp2.jpg`, img.toJPEG(100),(err)=>{
-                if(err){
-                    throw err;
-                }
-                else{
-                    console.log(`file saved at`,remote.app.getPath("desktop"))
-                }
-            })
-        });
     };
 };
