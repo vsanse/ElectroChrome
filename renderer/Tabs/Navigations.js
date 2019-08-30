@@ -47,7 +47,7 @@ module.exports = class Navigation {
     }
 
     init = () => {
-        this.newTab(this.purifyUrl( "https://www.google.com/"));
+        this.newTab(this.purifyUrl( "https://www.github.com/"));
     };
 
     // Update forward back and reload
@@ -211,7 +211,7 @@ module.exports = class Navigation {
         });
         webview[0].addEventListener("did-finish-load", res => {
             console.log("heer",res.validatedURL)
-            // this.navigateAllviews(webview, res.url);
+            this.navigateAllviews(webview, res.url);
         });
         webview[0].addEventListener("did-fail-load", res => {
             if (
@@ -668,7 +668,7 @@ module.exports = class Navigation {
             device
         ).data("width")}px;height:${$(device).data(
             "height"
-        )}px"><webview class="nav-views-view active" id="${devicename}-${sessionID}" data-session="${sessionID}" src="${$(
+        )}px"><webview class="nav-views-view active" partition="persist:devices" id="${devicename}-${sessionID}" data-session="${sessionID}" src="${$(
             "#large-device-view.active"
         )[0].getURL()}"></webview></div></div>`;
         $("#nav-body-views").prepend(composedWebviewTag);
@@ -676,9 +676,9 @@ module.exports = class Navigation {
     };
     setZoomFactor = zoomfactor => {
         let webviews = $(".nav-views-view.active");
+        console.log(webviews[0])
         for (let webview = 0; webview < webviews.length; webview++) {
-            if (
-                $(webviews[webview])
+            if ($(webviews[webview])
                     .parent()
                     .hasClass("view-wrapper")
             ) {
