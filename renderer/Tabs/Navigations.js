@@ -659,6 +659,7 @@ module.exports = class Navigation {
         this.setTabColor($(".nav-views-view.active")[0].getURL());
     };
 
+    // add a device
     addDevice = device => {
         let sessionID = $(".nav-body-tab.active").data("session");
         let devicename = $(device).data("name");

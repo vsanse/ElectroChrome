@@ -26,11 +26,14 @@
     }
 }
 .device-bar-wrapper{
-    display: flex;
+    display: none;
     padding: 0.5rem;
     justify-content: center;
     font-size: 0.75rem;
     background: $second;
+    &.active{
+        display: flex;
+    }
     .view-device{
         margin: 0.25rem;
         padding: 0.3rem;
