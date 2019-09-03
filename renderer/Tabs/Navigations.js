@@ -1,5 +1,6 @@
 var $ = require("jquery");
 var Color = require("color.js");
+const devices = require("../devices").devices;
 var fs = require("fs");
 var urlRegex = require("url-regex");
 const contextMenu = require("electron-context-menu");
@@ -47,6 +48,7 @@ module.exports = class Navigation {
     }
 
     init = () => {
+        this.createDeviceBar(this.SESSION_ID);
         this.newTab(this.purifyUrl( "https://www.github.com/"));
     };
 
@@ -656,6 +658,7 @@ module.exports = class Navigation {
         this.updateCtrls();
         this.setTabColor($(".nav-views-view.active")[0].getURL());
     };
+
     addDevice = device => {
         let sessionID = $(".nav-body-tab.active").data("session");
         let devicename = $(device).data("name");
@@ -674,6 +677,7 @@ module.exports = class Navigation {
         $("#nav-body-views").prepend(composedWebviewTag);
         this.addEvents($(`#${devicename}-${sessionID}`), sessionID);
     };
+
     setZoomFactor = zoomfactor => {
         let webviews = $(".nav-views-view.active");
         console.log(webviews[0])
@@ -692,6 +696,8 @@ module.exports = class Navigation {
             }
         }
     };
+
+    // get same view in all browser
     navigateAllviews = (currentView, url) => {
         let webviews = $(".nav-views-view.active");
         url = url ? url : $(currentView).attr("src");
@@ -704,4 +710,17 @@ module.exports = class Navigation {
             }
         }
     };
+
+    // Create device top bar
+    createDeviceBar = (sessionID) =>{
+        $(".device-bar").append(`<div class="device-bar-wrapper" data-session=${sessionID}></div>`);
+        for (var device in devices) {
+            $(".device-bar-wrapper").append(
+                `<div id="view-${device}" class="view-device" data-name="${device}" data-displayname="${devices[device].name}" data-width=${devices[device].width} data-height=${devices[device].height}><span>${devices[device].name}</span></div>`
+            );
+        }
+        $(".device-bar-wrapper").append(
+            '<div class="view-device add-device"><span><i class="fa fa-plus-square-o" aria-hidden="true"></i></span></div>'
+        );
+    }
 };

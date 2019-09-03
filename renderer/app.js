@@ -1,5 +1,5 @@
 var $ = require("jquery");
-const devices = require("./devices").devices;
+
 const tabs = new (require("./Tabs/Navigations"))();
 var { ipcRenderer, remote } = require("electron");
 tabs.init();
@@ -71,15 +71,6 @@ $("#nav-ctrls-url").keyup(e => {
         tabs.changeTab($("#nav-ctrls-url").val());
     }
 });
-
-for (var device in devices) {
-    $(".device-bar").append(
-        `<div id="view-${device}" class="view-device" data-name="${device}" data-displayname="${devices[device].name}" data-width=${devices[device].width} data-height=${devices[device].height}><span>${devices[device].name}</span></div>`
-    );
-}
-$(".device-bar").append(
-    '<div class="view-device add-device"><span><i class="fa fa-plus-square-o" aria-hidden="true"></i></span></div>'
-);
 
 $(".view-device").on("click", function(){
     if($(this).hasClass('active')){
