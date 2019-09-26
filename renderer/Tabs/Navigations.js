@@ -48,7 +48,7 @@ module.exports = class Navigation {
     }
 
     init = () => {
-        this.createDeviceBar(this.SESSION_ID);
+        $(".device-bar-wrapper").removeClass("active");
         this.newTab(this.purifyUrl( "https://www.github.com/"));
     };
 
@@ -212,7 +212,6 @@ module.exports = class Navigation {
             this.updateUrl(res.url);
         });
         webview[0].addEventListener("did-finish-load", res => {
-            console.log("heer",res.validatedURL)
             this.navigateAllviews(webview, res.url);
         });
         webview[0].addEventListener("did-fail-load", res => {
@@ -316,6 +315,7 @@ module.exports = class Navigation {
         let webview = $(
             '.nav-views-view[data-session="' + this.SESSION_ID + '"]'
         );
+        this.createDeviceBar(this.SESSION_ID);
         let newWebview = this.addEvents(webview, this.SESSION_ID++);
         (this.changeTabCallback || (() => {}))(newWebview);
         return newWebview;
@@ -668,7 +668,7 @@ module.exports = class Navigation {
             device
         ).data(
             "displayname"
-        )}<span></div><span class="captureview"><i class="fa fa-camera" aria-hidden="true"></i></span><div class="view-wrapper" style="width:${$(
+        )}<span></div><span class="captureview" title="screenshot"><i class="fa fa-camera-retro" aria-hidden="true"></i></span><span class="rotate" title="rotate"><i class="fa fa-mobile" aria-hidden="true"></i></span><div class="view-wrapper" style="width:${$(
             device
         ).data("width")}px;height:${$(device).data(
             "height"
@@ -702,7 +702,6 @@ module.exports = class Navigation {
     navigateAllviews = (currentView, url) => {
         let webviews = $(".nav-views-view.active");
         url = url ? url : $(currentView).attr("src");
-        console.log(url)
         for (let webview = 0; webview < webviews.length; webview++) {
             if (
                 $(webviews[webview]).attr("src") !== $(currentView).attr("src")
@@ -714,13 +713,13 @@ module.exports = class Navigation {
 
     // Create device top bar
     createDeviceBar = (sessionID) =>{
-        $(".device-bar").append(`<div class="device-bar-wrapper" data-session=${sessionID}></div>`);
+        $(".device-bar").append(`<div class="device-bar-wrapper active" data-session=${sessionID}></div>`);
         for (var device in devices) {
-            $(".device-bar-wrapper").append(
+            $(`.device-bar-wrapper[data-session=${sessionID}]`).append(
                 `<div id="view-${device}" class="view-device" data-name="${device}" data-displayname="${devices[device].name}" data-width=${devices[device].width} data-height=${devices[device].height}><span>${devices[device].name}</span></div>`
             );
         }
-        $(".device-bar-wrapper").append(
+        $(`.device-bar-wrapper[data-session=${sessionID}]`).append(
             '<div class="view-device add-device"><span><i class="fa fa-plus-square-o" aria-hidden="true"></i></span></div>'
         );
     }

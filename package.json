@@ -38,5 +38,17 @@
   "bugs": {
     "url": "https://github.com/vsanse/ElectroChrome/issues"
   },
-  "homepage": "https://github.com/vsanse/ElectroChrome#readme"
+  "homepage": "https://github.com/vsanse/ElectroChrome#readme",
+  "build": {
+    "appId": "com.vsanse.electrochrome",
+    "copyright": "Copyright 2019 ElectroChrome",
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis",
+      "certificateFile": "private/Certificates.p12"
+    }
+  }
 }

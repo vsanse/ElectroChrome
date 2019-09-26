@@ -72,47 +72,55 @@ $("#nav-ctrls-url").keyup(e => {
     }
 });
 
-$(".view-device").on("click", function(){
-    if($(this).hasClass('active')){
+$(document).on("click", ".view-device", function() {
+    if ($(this).hasClass("active")) {
         let deviceName = $(this).data("name");
         $(`#${deviceName}-device`).remove();
-    }
-    else{
+    } else {
         tabs.addDevice($(this)[0]);
     }
     $(this).toggleClass("active");
-})
+});
 
-$(document).on('input change', '.zoomLevel-slider', function() {
-    var zoomFactor = $(this).val()
+$(document).on("input change", ".zoomLevel-slider", function() {
+    var zoomFactor = $(this).val();
     setzoom(zoomFactor);
 });
 
-$("#nav-body-ctrls").on("click",".fa-minus",function(){
+$("#nav-body-ctrls").on("click", ".fa-minus", function() {
     var currZoom = parseInt($(".zoomLevel-slider").val());
-    $(".zoomLevel-slider").val(currZoom-1);
-    setzoom(currZoom-1);
-})
-$("#nav-body-ctrls").on("click",".fa-plus",function(){
+    $(".zoomLevel-slider").val(currZoom - 1);
+    setzoom(currZoom - 1);
+});
+$("#nav-body-ctrls").on("click", ".fa-plus", function() {
     var currZoom = parseInt($(".zoomLevel-slider").val());
-    $(".zoomLevel-slider").val(currZoom+1);
-    setzoom(currZoom+1);
-})
+    $(".zoomLevel-slider").val(currZoom + 1);
+    setzoom(currZoom + 1);
+});
 
-function setzoom(zoomFactor){
-    $(".zoomLevel").text(zoomFactor+"%");
-    $("#nav-body-views").css("zoom",zoomFactor*0.01);
-    tabs.setZoomFactor(zoomFactor*0.01);
+function setzoom(zoomFactor) {
+    $(".zoomLevel").text(zoomFactor + "%");
+    $("#nav-body-views").css("zoom", zoomFactor * 0.01);
+    tabs.setZoomFactor(zoomFactor * 0.01);
 }
 
-$(document).on("click", ".captureview", function(){
+$(document).on("click", ".captureview", function() {
     let $viewWrapper = $(this).siblings(".view-wrapper");
-    let $deviceDiv = $(this).parent(".device")
+    let $deviceDiv = $(this).parent(".device");
     options = {
         width: parseInt($viewWrapper.css("width").split("px")[0]),
         height: parseInt($viewWrapper.css("height").split("px")[0]),
         url: $deviceDiv.find("webview")[0].getURL(),
         device: $deviceDiv.attr("id")
-    }
-    ipcRenderer.send("windowchannel",options);
-})
+    };
+    ipcRenderer.send("windowchannel", options);
+});
+
+$(document).on("click", ".rotate", function() {
+    $(this).toggleClass("landscape");
+    var $view = $(this).siblings(".view-wrapper");
+    $view.toggleClass("landscape");
+    var width = $view.css("width");
+    $view.css("width", $view.css("height"));
+    $view.css("height", width);
+});
