@@ -20,7 +20,7 @@
   "author": "Vishal Sanserwal",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^6.0.5",
+    "electron": "^11.5.0",
     "nodemon": "^1.19.1"
   },
   "dependencies": {
